@@ -1,6 +1,6 @@
 # Variables
 CXX = g++
-CXXFLAGS = -Wall -std=c++11
+CXXFLAGS = -Wall -std=c++11 -g
 LIBS = -lglfw -lGLEW -lGL
 SRCDIR = src
 INCLUDES = -I$(SRCDIR) -I/home/brody-ubuntu/graphics-assignment-1/glm

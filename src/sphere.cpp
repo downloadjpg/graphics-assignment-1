@@ -4,9 +4,10 @@
 Sphere::Sphere(vec4 _origin, float _radius){
     origin = _origin;
     radius = _radius;
+    material.albedo = Color(200, 100, 150);
 };
 
-RenderObject::IntersectionData Sphere::intersection(Ray& ray) {
+Surface::IntersectionData Sphere::intersection(Ray& ray) {
     // Some help taken from https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection.html
     vec4 oc = ray.origin - origin; // 'oc' being o-center
     float a = 1; //= dot(ray.direction, ray.direction); this should always equal 1, since D is normalized.

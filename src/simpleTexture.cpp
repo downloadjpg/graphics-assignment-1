@@ -2,7 +2,7 @@
 #include <GL/glew.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include "raytracing.h"
+#include "scene.h"
 
 
 #include <iostream>
@@ -10,6 +10,8 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 void set_texture();
+
+Scene* current_scene;
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -161,6 +163,7 @@ int main()
 
 
     // initialize world here!
+    current_scene = new Scene();
 
     // render loop
     // -----------
@@ -224,7 +227,7 @@ void set_texture(){
         const int width  = 512; // keep it in powers of 2!
         const int height = 512; // TODO: update camera width/height to match
 
-        unsigned char* image = generateImage(width, height);
+        unsigned char* image = current_scene->renderImage(width, height);
 
         unsigned char *data = &image[0];
         if (data)

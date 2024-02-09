@@ -2,13 +2,10 @@
 #include "ray.h"
 #include "color.h"
 #pragma once
-
 using namespace glm;
 
-
-class RenderObject {
+class Surface {
 public:
-
     struct IntersectionData {
         bool hit;
         vec4 normal;
@@ -16,10 +13,14 @@ public:
     };
 
     struct Material {
-        Color albedo;
+        Color albedo = Color(255,150,255); // bright annoying pink for uninitialized surfaces
+        float specular; // example, not implemented
+        float roughness; // example, not implemented
     };
 
     vec4 origin;
+    Material material;
+    
     virtual IntersectionData intersection(Ray& ray)  {
         return IntersectionData{
             .hit = false,
@@ -27,4 +28,5 @@ public:
             .distance = 0
         };
     };
+    virtual ~Surface() {};
 };

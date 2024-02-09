@@ -1,11 +1,11 @@
 #include <glm/vec4.hpp>
 #include <glm/geometric.hpp>
 #include "ray.h"
-#include "renderObject.h"
+#include "surface.h"
 
 using namespace glm;
 
-class Sphere : public RenderObject{
+class Sphere : public Surface{
 public:
     vec4 origin;
     float radius;
