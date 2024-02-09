@@ -48,7 +48,9 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "cinttypes": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "chrono": "cpp",
+        "ratio": "cpp"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/g++-11",
     "makefile.launchConfigurations": [

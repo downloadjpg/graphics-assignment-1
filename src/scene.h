@@ -2,14 +2,14 @@
 #include "plane.h"
 #include "camera.h"
 //#include "light.h"
-#include <glm/vec4.hpp>
+#include <glm/vec3.hpp>
 #include <vector>
 
 struct Light {
-    vec4 origin;
+    vec3 origin;
     float intensity;
 
-    Light(vec4 _origin, float _intensity) {
+    Light(vec3 _origin, float _intensity) {
         origin = _origin;
         intensity = _intensity;
     }
@@ -22,6 +22,7 @@ struct Scene {
     std::vector<Light*> lights = {};
     Color rayColor(Ray& ray);
     float accumulateLight(Ray& ray, Surface::HitRecord& intersection);
+    Surface::HitRecord closestIntersectionWithSurface(Ray& ray);
 
 public:
     Scene();

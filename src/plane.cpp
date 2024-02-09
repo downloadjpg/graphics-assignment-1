@@ -1,7 +1,7 @@
 #include "plane.h"
 #include <iostream>
 
-Plane::Plane(vec4 position, vec4 _normal) {
+Plane::Plane(vec3 position, vec3 _normal) {
     origin = position;
     normal = _normal;
 }
@@ -30,7 +30,7 @@ Surface::IntersectionData Plane::funkyIntersection(Ray& ray) {
     if (abs(denominator) > 0.0001) {
         float distance = dot(normal, origin - ray.origin) / denominator;
         if (distance > 0) {
-            vec4 reflectedDirection = ray.direction - 2 * dot(ray.direction, normal) * normal;
+            vec3 reflectedDirection = ray.direction - 2 * dot(ray.direction, normal) * normal;
             return IntersectionData{
                 .hit = true,
                 .normal = reflectedDirection,
@@ -40,7 +40,7 @@ Surface::IntersectionData Plane::funkyIntersection(Ray& ray) {
     }
     return Surface::IntersectionData{
         .hit = false,
-        .normal = vec4(0,0,0,0),
+        .normal = vec3(0,0,0,0),
         .distance = 0.0f
     };
 }*/

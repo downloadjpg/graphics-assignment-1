@@ -5,7 +5,7 @@ using namespace glm;
 
 class Plane : public Surface{
 public:
-    vec4 normal;
-    Plane(vec4 position, vec4 _normal);
+    vec3 normal;
+    Plane(vec3 position, vec3 _normal);
     HitRecord intersection(Ray& ray);
 };

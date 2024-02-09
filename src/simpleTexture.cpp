@@ -2,16 +2,23 @@
 #include <GL/glew.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+
 #include "scene.h"
+#include "camera.h"
 
-
+#include <chrono>
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 void set_texture();
-
+// BRODY HERE ===============================================================================================
 Scene* current_scene;
+Camera* camera;
+std::chrono::time_point<std::chrono::steady_clock> timeOfPreviousFrame = std::chrono::steady_clock::now();
+void updateClock();
+float timeDelta = 0.0f;
+// ============================================================================================================
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -161,14 +168,19 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 
-
-    // initialize world here!
+    // BRODY HERE ===============================================================================================
     current_scene = new Scene();
+    camera = current_scene->camera;
+
+    // ============================================================================================================
 
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
     {
+        // BRODY HERE ===============================================================================================
+        updateClock();
+        // ============================================================================================================
         // input
         // -----
         processInput(window);
@@ -211,6 +223,22 @@ void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    // BRODY HERE ===============================================================================================
+    // Camera movement
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera->move(vec3(0,0,-1), timeDelta);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera->move(vec3(0,0,1), timeDelta);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera->move(vec3(-1,0,0), timeDelta);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera->move(vec3(1,0,0), timeDelta);
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        camera->move(vec3(0,1,0), timeDelta);
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        camera->move(vec3(0,-1,0), timeDelta);
+        // ============================================================================================================
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -240,4 +268,15 @@ void set_texture(){
             std::cout << "Failed to load texture" << std::endl;
         }
         delete[] image;
+}
+
+// BRODY HERE ===============================================================================================
+void updateClock() {
+    auto now = std::chrono::steady_clock::now(); // Why steady clock, you ask? 
+    //                                               It sounds stable.
+
+    // Get time elapsed since last frame
+    timeDelta = (now - timeOfPreviousFrame).count() / 1000000000.0f; // nanoseconds? really?
+    //std::cout << timeDelta << std::endl;
+    timeOfPreviousFrame = now;
 }

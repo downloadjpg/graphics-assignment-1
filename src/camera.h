@@ -1,6 +1,5 @@
-#include <glm/vec4.hpp>
-#include <glm/vec2.hpp>
-#include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
+#include <glm/geometric.hpp>
 #include "ray.h"
 #pragma once
 
@@ -12,20 +11,22 @@ public:
     enum ProjectionType {orthographic, perspective};
     
     // Constructor
-    Camera(vec4 _origin, vec4 _up, vec4 _forward);
+    Camera(vec3 _origin, vec3 _up, vec3 _forward);
     // Projection setting functions, can be orthographic or perspective. Perspective distance ~ FOV (kinda)
     void setProjectionType(ProjectionType type);
     void setPerspectiveDistance(float distance);
 
+    void move(vec3 direction, float delta);
+    void lookAt(vec3 position); // look at a point in (global) space e.g. `lookAt(sphere.origin)`
     // Generate a ray for a given pixel
     Ray generateRay(int i, int j);
-    vec4 origin;
+    vec3 origin;
 
 private:
     // Basis vectors for ray generation
-    vec4 u;
-    vec4 v;
-    vec4 w;
+    vec3 u;
+    vec3 v;
+    vec3 w;
     
     // canonical view volume dimensions (extract to struct?)
     // TODO: should the near plane be at 0???

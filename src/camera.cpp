@@ -1,11 +1,34 @@
 #include "camera.h"
 
-Camera::Camera(vec4 _origin = vec4(0,0,0,1), vec4 _up = vec4(0,1,0,0), vec4 _forward = vec4(0,0,-1,0)) {
+
+Camera::Camera(vec3 _origin = vec3(0,0,0), vec3 _up = vec3(0,1,0), vec3 _forward = vec3(0,0,-1)) {
     origin = _origin;
     v = _up;
-    w = _forward * -1.0f;
-    u = vec4(cross(vec3(v), vec3(w)), 0);
+    w = _forward * -1.0f; // why the fuck have i multiplied by -1 three times,
+    //                       i know -z is forward, but... i feel like i'm doing something wrong, 
+    //                       are basis vectors just 'backward'?
+    //
+    //                       NOTE TO FUTURE SELF: please do not code while udner the influence
+    //                           (...the influence of sleep deprivation)            
+    //                                                          
+    u = cross(v, w);
 };
+
+
+void Camera::move(vec3 direction, float delta) {
+    float moveSpeed = 5.0f;
+    origin += direction * moveSpeed * delta;
+}
+
+void Camera::lookAt(vec3 position){
+
+     // flip here too! 'u' should point out the back of your head
+    w = normalize(-(position - origin)); // forward
+    u= normalize(cross(vec3(0,1,0), w)); //
+    v = cross(u, v);
+
+    // NOTE: we assume up is (0,1,0), assumes an 'up' direction to maintain orthogonality
+}
 
 Ray Camera::generateRay(int i, int j) {
     if (projectionType == orthographic) {
