@@ -7,7 +7,7 @@ Sphere::Sphere(vec4 _origin, float _radius){
     material.albedo = Color(200, 100, 150);
 };
 
-Surface::IntersectionData Sphere::intersection(Ray& ray) {
+Surface::HitRecord Sphere::intersection(Ray& ray) {
     // Some help taken from https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection.html
     vec4 oc = ray.origin - origin; // 'oc' being o-center
     float a = 1; //= dot(ray.direction, ray.direction); this should always equal 1, since D is normalized.
@@ -18,15 +18,18 @@ Surface::IntersectionData Sphere::intersection(Ray& ray) {
 
     // TODO: restructure intersectiondata to have no data when there's no hit! (wish i had rust enums :( )
     if (discriminant < 0) {
-        return IntersectionData{ .hit = false};
+        return HitRecord::Miss();
     }
 
     // Normal will be the vector from the center of the sphere to the point of intersection
     float distance = (-b / 2.0f) - sqrt(discriminant);
-    vec4 normal = normalize((ray.origin + distance * ray.direction) - origin);
-    return IntersectionData{
+    vec4 position = ray.origin + distance * ray.direction;
+    vec4 normal = normalize(position - origin);
+    return HitRecord{
         .hit = true,
+        .distance =  distance, // this might be wrong!
         .normal = normal,
-        .distance =  distance // this might be wrong!
+        .position = position
+        .surface = this
     };
 };

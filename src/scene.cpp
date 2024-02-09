@@ -28,6 +28,10 @@ Scene::Scene() {
         new Sphere(vec4(0.1,0,-10,1), 1.0f),
         new Plane(vec4(0,-2.0,-20,1), normalize(vec4(0,1,0,0)))
     };
+
+    lights = {
+        new Light(vec4(-4, 10, -10, 1), 1.0f)
+    };
 }
 
 
@@ -56,37 +60,55 @@ unsigned char* Scene::renderImage(const int width, const int height) {
 
 
 Color Scene::rayColor(Ray& ray) {
-    float closestIntersection = INFINITY;
-    Color color = cuteGradient(ray.direction.y + 0.5); // background color!
+    
+    Surface::HitRecord closestHit;
+    float closestDistance = INFINITY;
+
+    Color color = Color(0,0,0);
     // Check for intersections with all objects
     for (Surface* surface : surfaces) {
 
         // OPTIMIZE: we don't have to calculate the entire IntersectionData just to get the distance
         if (surface == nullptr) {std::cout << "GAHH NULLPTR"; continue;}
-        Surface::IntersectionData intersection = surface->intersection(ray);
+        Surface::HitRecord intersection = surface->intersection(ray);
         if (!intersection.hit) {continue;}
-        if (intersection.distance > closestIntersection) {continue;}
+        if (intersection.distance > closestDistance) {continue;}
 
-        closestIntersection = intersection.distance;
-
+        // If the intersection is closer than the previous closest, update the closest intersection
+        closestDistance = intersection.distance;
+        closestHit = intersection; // hopefully memory doens't leak here or something
         
-        // Color based on the normal of the intersection
-        //vec4& n = intersection.normal;
-        //n = (n * 0.5f + vec4(0.5, 0.5, 0.5, 0)) * 255.0f ;
-        //color = Color(n.x, n.y, n.z);
-
-        // Color based on the surface's albedo
-        //color = surface->material.albedo;
-
-        // Color based on depth (intersection distance)
-        float max = 10.0f;
-        float d = intersection.distance > max ? max : intersection.distance;
-        d = d / max;
-        d = d*d;
-        color = Color(255 * (1 - (d)), 255 * (1 - (d)), 255 * (1 - (d)));
     }
+    // If the ray didn't intersect a single object, return the background color.
+    if (closestDistance == INFINITY) {
+        color = cuteGradient(ray.direction.y);
+    }
+    color = closestHit.surface->material.albedo * accumulateLight(ray, closestHit);
     return color;
 }
+
+ float Scene::accumulateLight(Ray& ray, Surface::HitRecord& hitRecord) {
+    float totalLight = 0.0f;
+    vec4 intersectionPosition = hitRecord.position;
+    Surface* surface = hitRecord.surface;
+    totalLight += 0.1f; // ambient light
+    for (Light* light : lights) {
+        // Diffuse!
+        // calculate what direction the light is coming from
+        vec4 incidentLightDirection = normalize(light->origin - intersectionPosition); //TODO: what should the w be here?
+        float diffuse = max(0.0f, dot(hitRecord.normal, incidentLightDirection)); // multiply by constant here
+        totalLight += diffuse;
+        // Specular!
+        // check if the material is specular at all
+        if (surface->material.specular > 0) {
+            vec4 reflection = reflect(ray.direction, hitRecord.normal);
+            float specular = pow(max(0.0f, dot(reflection, incidentLightDirection)), surface->material.specular);
+            totalLight += diffuse;
+        }
+
+    }
+    return totalLight;
+ }
 
 Scene::~Scene() {
     delete camera;

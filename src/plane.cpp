@@ -6,26 +6,23 @@ Plane::Plane(vec4 position, vec4 _normal) {
     normal = _normal;
 }
 
-Surface::IntersectionData Plane::intersection(Ray& ray) {
-    //std::cout << "check";
+Surface::HitRecord Plane::intersection(Ray& ray) {
     float denominator = dot(normal, ray.direction);
     if (abs(denominator) > 0.0001) {
         float distance = dot(normal, origin - ray.origin) / denominator;
         if (distance > 0) {
-            return IntersectionData{
+            return HitRecord{
                 .hit = true,
+                .distance = distance,
                 .normal = normal,
-                .distance = distance
+                .position = ray.origin + distance * ray.direction,
+                .surface = this
             };
         }
 
     }
 
-    return IntersectionData{
-        .hit = false,
-        .normal = vec4(0,0,0,0),
-        .distance = 0.0f
-    };
+    return HitRecord::Miss();
 }
 /*
 Surface::IntersectionData Plane::funkyIntersection(Ray& ray) {

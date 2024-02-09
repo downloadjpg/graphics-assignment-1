@@ -10,7 +10,7 @@ public:
     vec4 origin;
     float radius;
 
-    IntersectionData intersection(Ray& ray);
+    HitRecord intersection(Ray& ray);
     Sphere(vec4 _origin, float _radius);
 
 };
