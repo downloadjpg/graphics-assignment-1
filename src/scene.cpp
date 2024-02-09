@@ -1,17 +1,6 @@
 #include "scene.h"
 #include <iostream>
 
-
-Color cuteGradient(float t) {
-    // Cute little background gradient based off a given parameter [0.0,1.0]
-    return Color(
-        255 * (1-t),
-        255 * (1-t),
-        255
-    );
-}
-
-
 Scene::Scene() {
 
     time = 0.0f;
@@ -30,7 +19,8 @@ Scene::Scene() {
     };
 
     lights = {
-        new Light(vec4(-4, 10, -10, 1), 1.0f)
+        new Light(vec4(-4, 10, -10, 1), 1.0f),
+        new Light(vec4(8, 10, -10, 1), 0.1f)
     };
 }
 
@@ -61,6 +51,7 @@ unsigned char* Scene::renderImage(const int width, const int height) {
 
 Color Scene::rayColor(Ray& ray) {
     
+    const Color BACKGROUND_COLOR = Color(30,30,30);
     Surface::HitRecord closestHit;
     float closestDistance = INFINITY;
 
@@ -81,13 +72,14 @@ Color Scene::rayColor(Ray& ray) {
     }
     // If the ray didn't intersect a single object, return the background color.
     if (closestDistance == INFINITY) {
-        color = cuteGradient(ray.direction.y);
+        color = BACKGROUND_COLOR;
     }
     color = closestHit.surface->material.albedo * accumulateLight(ray, closestHit);
     return color;
 }
 
  float Scene::accumulateLight(Ray& ray, Surface::HitRecord& hitRecord) {
+    //return 1.0f;
     float totalLight = 0.0f;
     vec4 intersectionPosition = hitRecord.position;
     Surface* surface = hitRecord.surface;
@@ -100,10 +92,10 @@ Color Scene::rayColor(Ray& ray) {
         totalLight += diffuse;
         // Specular!
         // check if the material is specular at all
-        if (surface->material.specular > 0) {
+        if (surface->material.specular > 0.001f) {
             vec4 reflection = reflect(ray.direction, hitRecord.normal);
             float specular = pow(max(0.0f, dot(reflection, incidentLightDirection)), surface->material.specular);
-            totalLight += diffuse;
+            totalLight += specular;
         }
 
     }

@@ -5,19 +5,6 @@
 #include <glm/vec4.hpp>
 #include <vector>
 
-struct Scene {
-    float time = 0.0f;
-    Camera* camera;
-    std::vector<Surface*> surfaces;
-    std::vector<Light*> lights = {};
-    Color rayColor(Ray& ray);
-    float accumulateLight(Ray& ray, Surface::HitRecord& intersection);
-public:
-    Scene();
-    ~Scene();
-    unsigned char* renderImage(const int width, const int height);
-};
-
 struct Light {
     vec4 origin;
     float intensity;
@@ -26,4 +13,18 @@ struct Light {
         origin = _origin;
         intensity = _intensity;
     }
+};
+
+struct Scene {
+    float time = 0.0f;
+    Camera* camera;
+    std::vector<Surface*> surfaces;
+    std::vector<Light*> lights = {};
+    Color rayColor(Ray& ray);
+    float accumulateLight(Ray& ray, Surface::HitRecord& intersection);
+
+public:
+    Scene();
+    ~Scene();
+    unsigned char* renderImage(const int width, const int height);
 };

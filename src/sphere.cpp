@@ -29,7 +29,7 @@ Surface::HitRecord Sphere::intersection(Ray& ray) {
         .hit = true,
         .distance =  distance, // this might be wrong!
         .normal = normal,
-        .position = position
+        .position = position,
         .surface = this
     };
 };
