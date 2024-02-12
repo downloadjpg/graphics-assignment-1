@@ -1,6 +1,5 @@
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
-#include "ray.h"
 #include "surface.h"
 
 using namespace glm;

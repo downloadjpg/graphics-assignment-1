@@ -4,7 +4,7 @@
 Sphere::Sphere(vec3 _origin, float _radius){
     origin = _origin;
     radius = _radius;
-    material.albedo = Color(200, 100, 150);
+    material.albedo = ColorF(1.0f, 0.0f, 0.0f);
 };
 
 Surface::HitRecord Sphere::intersection(Ray& ray) {

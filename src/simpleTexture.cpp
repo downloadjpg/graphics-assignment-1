@@ -120,12 +120,13 @@ int main()
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
+    // BRODY HERE: Changed the vertex positions to cover the whole window
     float vertices[] = {
         // positions          // colors           // texture coords
-         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+         1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+         1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+        -1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+        -1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
     };
     unsigned int indices[] = {  
         0, 1, 3, // first triangle
@@ -238,6 +239,14 @@ void processInput(GLFWwindow *window)
         camera->move(vec3(0,1,0), timeDelta);
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
         camera->move(vec3(0,-1,0), timeDelta);
+
+    // TODO: Camera lookAt
+
+    // Swapping projection type
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+        camera->setProjectionType(Camera::ProjectionType::perspective);
+    if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+        camera->setProjectionType(Camera::ProjectionType::orthographic);
         // ============================================================================================================
 }
 

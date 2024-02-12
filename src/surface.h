@@ -1,4 +1,3 @@
-#include <glm/vec3.hpp>
 #include "ray.h"
 #include "color.h"
 #pragma once
@@ -22,21 +21,16 @@ public:
     };
 
     struct Material {
-        Color albedo = Color(255,10,200); // bright annoying pink for uninitialized surfaces
+        ColorF albedo = ColorF(0.7f,0.1f,0.2f); // bright annoying pink for uninitialized surfaces
         float specular = -1.0f; // 0-1000 are good values for this, negative means no specular reflection
     };
 
     vec3 origin;
     Material material;
     
+
     virtual HitRecord intersection(Ray& ray)  {
-        return HitRecord{
-            .hit = false,
-            .distance = 0,
-            .normal = vec3(0,0,0),
-            .position = vec3(0,0,0),
-            .surface = this
-        };
+        return HitRecord::Miss();
     };
     virtual ~Surface() {};
 };

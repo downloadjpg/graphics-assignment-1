@@ -60,3 +60,7 @@ Ray Camera::generatePerspectiveRay(int i, int j) {
 	
 	return ray;
 }
+
+void Camera::setProjectionType(ProjectionType type) {
+    projectionType = type;
+}

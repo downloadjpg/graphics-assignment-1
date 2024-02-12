@@ -4,6 +4,7 @@
 Plane::Plane(vec3 position, vec3 _normal) {
     origin = position;
     normal = _normal;
+    
 }
 
 Surface::HitRecord Plane::intersection(Ray& ray) {
