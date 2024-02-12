@@ -16,7 +16,7 @@ public:
 
     // Function for setting the projection type, FOV.
     void setProjectionType(ProjectionType type);
-    void setPerspectiveFOV(float fov); // TODO: HOW?
+    void setPerspectiveFOV(float fov);
 
     void move(vec3 direction, float delta);
     void lookAt(vec3 position); // look at a point in (global) space e.g. `lookAt(sphere.origin)`

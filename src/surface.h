@@ -1,6 +1,5 @@
 #pragma once
 #include "ray.h"
-#include "colorf.h"
 #include "hitRecord.h"
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
@@ -8,7 +7,7 @@ class Surface {
 public:
 // Material properties, can be used by other classes, but it's a surface property.
     struct Material {
-        ColorF albedo = ColorF(0.7f,0.1f,0.2f); // bright annoying pink for uninitialized surfaces
+        vec3 albedo = vec3(0.7f,0.1f,0.2f); // bright annoying pink for uninitialized surfaces
         float specular = -1.0f; // 0-1000 are good values for this, negative means no specular reflection
         bool reflective = false; // TODO: float?
     };

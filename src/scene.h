@@ -34,6 +34,7 @@ private:
     // The time of the scene.
     float time = 0.0f;
 
+
     // Returns the color of a ray, given the scene.
     vec3 colorRay(Ray& ray, int depth);
 

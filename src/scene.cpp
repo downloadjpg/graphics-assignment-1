@@ -1,13 +1,16 @@
 #include "scene.h"
 #include "camera.h"
+#include <glm/vec3.hpp>
 
 Scene::Scene() {
     camera = new Camera(
-        vec3(0,2,0), // origin
+        vec3(0,1,0), // origin
         vec3(0,1,0), // up
         vec3(0,0,-1) // forward
     );
     // Add some shapes!
+    surfaces.push_back(new Sphere(vec3(0, 0, -20), 1.0f));
+    surfaces.push_back(new Plane(vec3(0, 0, 0), vec3(0, 1, 0)));
 }
 // Renders an image of the scene with the given width and height. This is the main function of the raytracer.
 // Returns a pointer to the image data, which is a 1D array of RGB values.
@@ -18,10 +21,9 @@ unsigned char* Scene::renderImage(int width, int height) {
     // Generate an HDR buffer, representing the raw amount/color of light at each pixel.
 
     // NOTE: Radiance is the pure amount of light (for each color), 
-    // while luminosity is how bright said color appears to the human eye.
+    //      while luminosity is how bright said color appears to the human eye.
     vec3* radianceBuffer = new vec3[width * height];
-    // The function also returns the maximum white point in the image, which is used for tone mapping.
-    float maxWhitePoint = writeRadianceBuffer(radianceBuffer, width, height);  
+    float maxWhitePoint = writeRadianceBuffer(radianceBuffer, width, height);  // Useful return value
     // Map this buffer so each value is between 0 and 1. (Reinhard tone mapping).
     applyToneMap(radianceBuffer, width, height, maxWhitePoint);
     // Then, convert the mapped radiance to an RGB value and store it in the image array.
@@ -40,20 +42,39 @@ unsigned char* Scene::renderImage(int width, int height) {
 
 
 vec3 Scene::colorRay(Ray& ray, int depth) {
+    const vec3 BACKGROUND_COLOR = normalize(vec3(0.3f, 0.2f, 0.5f));
     // If we've reached the maximum recursion depth, return black.
-    if (depth > maxDepth) {
-        return vec3(0, 0, 0);
-    }
+    // if (depth > maxDepth) {
+    //     return vec3(0, 0, 0);
+    // }
     // Find the closest intersection with a surface.
-    HitRecord hit = closestIntersectionWithSurface(ray, surfaces);
+    HitRecord intersection = closestIntersectionWithSurface(ray, surfaces);
     // If we didn't hit anything, return the background color.
-    if (!hit.hit) {
-        return vec3(0, 0, 0);
+    if (!intersection.hit) {
+        return BACKGROUND_COLOR;
     }
     // Otherwise, calculate the color of the ray based on the hit.
-    return hit.material.albedo;
+    return intersection.surface->material.albedo;
 }
 
+HitRecord Scene::closestIntersectionWithSurface(Ray &ray, std::vector<Surface *> surfaces)
+{
+    if (surfaces.size() == 0) {
+        return HitRecord::Miss();
+    }
+    HitRecord closestHit = HitRecord::Miss();
+    for (auto surface : surfaces) {
+        HitRecord intersection = surface->intersection(ray);
+
+        if (intersection.hit && intersection.distance > tMin && intersection.distance < tMax) {
+            if (intersection.distance < closestHit.distance) {
+                closestHit = intersection;
+            }
+        }
+    }
+
+    return closestHit;
+}
 
 Scene::~Scene() {
     delete camera;
@@ -81,7 +102,7 @@ float Scene::writeRadianceBuffer(vec3* radianceBuffer, int width, int height) {
             vec3 c = colorRay(ray, 0);
             radianceBuffer[i * width + j] = c;
             float magnitude = c.length();
-            maxWhitePoint = std::max(maxWhitePoint, magnitude); // TODO: this cast might be stupid
+            maxWhitePoint = std::max(maxWhitePoint, magnitude);
         }
     }
     return maxWhitePoint;

@@ -14,7 +14,7 @@ struct HitRecord {
 
     static HitRecord Miss() { return HitRecord{
         .hit = false,
-        .distance = 0,
+        .distance = std::numeric_limits<float>::max(),
         .position = vec3(0,0,0),
         .surface = nullptr};
     }
