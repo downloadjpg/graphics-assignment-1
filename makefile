@@ -3,7 +3,8 @@ CXX = g++
 CXXFLAGS = -Wall -std=c++11 -g
 LIBS = -lglfw -lGLEW -lGL
 SRCDIR = src
-INCLUDES = -I$(SRCDIR) -I/home/brody-ubuntu/graphics-assignment-1/glm
+IMGUI_DIR = imgui
+INCLUDES = -I$(SRCDIR) -I$(IMGUI_DIR) -Iglm 
 
 SRC = $(wildcard $(SRCDIR)/*.cpp)
 
@@ -23,6 +24,9 @@ $(EXEC): $(OBJ)
 
 # Compiling
 build/%.o: $(SRCDIR)/%.cpp | build
+	$(CXX) $(INCLUDES) -c $< -o $@ $(CXXFLAGS)
+
+build/%.o: $(IMGUI_DIR)/%.cpp | build
 	$(CXX) $(INCLUDES) -c $< -o $@ $(CXXFLAGS)
 
 # Cleaning up
