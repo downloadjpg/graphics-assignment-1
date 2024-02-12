@@ -50,7 +50,8 @@
         "cinttypes": "cpp",
         "typeinfo": "cpp",
         "chrono": "cpp",
-        "ratio": "cpp"
+        "ratio": "cpp",
+        "valarray": "cpp"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/g++-11",
     "makefile.launchConfigurations": [

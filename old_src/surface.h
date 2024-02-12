@@ -1,30 +1,46 @@
-#pragma once
 #include "ray.h"
-#include "colorf.h"
-#include "hitRecord.h"
+#include "color.h"
 #include <glm/vec3.hpp>
-#include <glm/vec2.hpp>
+#include <glm/geometric.hpp>
+#pragma once
+using namespace glm;
+
 class Surface {
 public:
-// Material properties, can be used by other classes, but it's a surface property.
+    struct HitRecord {
+        bool hit;
+        float distance;
+        vec3 normal;
+        vec3 position; //  redundant, as it's the distance times the ray's direction, but often needed eventually.
+        Surface* surface; // oh boy now we're getting into memory management
+
+        static HitRecord Miss() { return HitRecord{
+            .hit = false,
+            .distance = 0,
+            .position = vec3(0,0,0),
+            .surface = nullptr};
+        }
+    };
+
     struct Material {
         ColorF albedo = ColorF(0.7f,0.1f,0.2f); // bright annoying pink for uninitialized surfaces
         float specular = -1.0f; // 0-1000 are good values for this, negative means no specular reflection
-        bool reflective = false; // TODO: float?
     };
 
+
     vec3 origin;
-    Material material = Material();
+    Material material;
+    
 
     virtual HitRecord intersection(Ray& ray)  {return HitRecord::Miss();};
-    virtual ~Surface() {};    
+    virtual ~Surface() {};
 };
 
-
-// Define a few surfaces!
+// -----------------------------------------------------------------------------
 
 class Sphere : public Surface {
 public:
+    vec3 origin;
     float radius;
 
     Sphere(vec3 _origin, float _radius);
@@ -57,6 +73,7 @@ public:
 
 class Tetrahedron : public Surface {
 public:
+    vec3 origin;
     // vec3 edgeLength - might not be good to store this, as it's redundant with the vertices.
     Tetrahedron(vec3 _origin, float _edgeLength);
     ~Tetrahedron();
