@@ -31,7 +31,7 @@ Scene::Scene() {
         new Sphere(vec3(-1,0.8f,-5), 0.4f),
         new Plane(vec3(0,0,0), normalize(vec3(0,1,0))),
         //new Tetrahedron(vec3(1,-4,0), 0.3f)
-        new Triangle(vec3(0.0,-0.2,0.0), vec3(1,0,0), vec3(0,1,0))
+        //new Triangle(vec3(0.0, 0.2, -5), vec3(1,0.2,-5), vec3(0,1,-5))
     };
 
     surfaces[0]->material.albedo = ColorF(1,0,0);
@@ -81,7 +81,7 @@ unsigned char* Scene::renderImage(const int width, const int height) {
         int idLum = i * width + j;
         float lum = luminanceBuffer[idLum].magnitude();
         float scaledLuminance = lum / averageLuminance / 9.6;
-        scaledLuminance *= gamma;
+        //scaledLuminance *= gamma;
         float displayLuminance = scaledLuminance / (1 + scaledLuminance);
 
         float finalFinalFinalMultiplier = displayLuminance/lum;
