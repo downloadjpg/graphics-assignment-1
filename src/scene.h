@@ -1,5 +1,4 @@
-#include "sphere.h"
-#include "plane.h"
+#include "surface.h"
 #include "camera.h"
 //#include "light.h"
 #include <glm/vec3.hpp>
@@ -40,6 +39,7 @@ struct Light {
 };
 
 struct Scene {
+public:
     float time = 0.0f;
     Camera* camera;
     std::vector<Surface*> surfaces;
@@ -48,7 +48,6 @@ struct Scene {
     float accumulateLight(Ray& ray, Surface::HitRecord& intersection);
     Surface::HitRecord closestIntersectionWithSurface(Ray& ray);
 
-public:
     Scene();
     ~Scene();
     unsigned char* renderImage(const int width, const int height);

@@ -1,10 +1,9 @@
-#include "sphere.h"
+#include "surface.h"
 #include <iostream>
 
 Sphere::Sphere(vec3 _origin, float _radius){
     origin = _origin;
     radius = _radius;
-    material.albedo = ColorF(1.0f, 0.0f, 0.0f);
 };
 
 Surface::HitRecord Sphere::intersection(Ray& ray) {
@@ -15,7 +14,6 @@ Surface::HitRecord Sphere::intersection(Ray& ray) {
     float c = dot(oc, oc) - radius * radius;
     float discriminant = b * b - 4 * a * c;
 
-
     // TODO: restructure intersectiondata to have no data when there's no hit! (wish i had rust enums :( )
     if (discriminant < 0) 
         return HitRecord::Miss();
@@ -24,8 +22,10 @@ Surface::HitRecord Sphere::intersection(Ray& ray) {
     float distance = (-b / 2.0f) - sqrt(discriminant);
     if (distance < 0) 
         return HitRecord::Miss();
+
     vec3 position = ray.origin + distance * ray.direction;
     vec3 normal = normalize(position - origin);
+    
     return HitRecord{
         .hit = true,
         .distance =  distance, // this might be wrong!

@@ -29,7 +29,9 @@ Scene::Scene() {
         new Sphere(vec3(1,0.5f,-5), 0.2f),
         new Sphere(vec3(0,0.5f,-8), 0.2f),
         new Sphere(vec3(-1,0.8f,-5), 0.4f),
-        new Plane(vec3(0,0,0), normalize(vec3(0,1,0)))
+        new Plane(vec3(0,0,0), normalize(vec3(0,1,0))),
+        //new Tetrahedron(vec3(1,-4,0), 0.3f)
+        new Triangle(vec3(0.0,-0.2,0.0), vec3(1,0,0), vec3(0,1,0))
     };
 
     surfaces[0]->material.albedo = ColorF(1,0,0);
@@ -75,17 +77,19 @@ unsigned char* Scene::renderImage(const int width, const int height) {
     for (int i = 0; i < height; i++) {
     for (int j = 0; j < width; j++) {
 
+        const float gamma = 20.0f;
         int idLum = i * width + j;
         float lum = luminanceBuffer[idLum].magnitude();
         float scaledLuminance = lum / averageLuminance / 9.6;
+        scaledLuminance *= gamma;
         float displayLuminance = scaledLuminance / (1 + scaledLuminance);
 
-        float finaFinalFinalMultiplier = displayLuminance/lum;
-        if (finaFinalFinalMultiplier < 0.001f || finaFinalFinalMultiplier > 1.0f)  std::cout << finaFinalFinalMultiplier << std::endl;
+        float finalFinalFinalMultiplier = displayLuminance/lum;
+        if (finalFinalFinalMultiplier < 0.001f || finalFinalFinalMultiplier > 1.0f)  std::cout << finalFinalFinalMultiplier << std::endl;
         Color c = Color(
-            luminanceBuffer[idLum].r * 255.0f * finaFinalFinalMultiplier, /// averageLuminance,
-            luminanceBuffer[idLum].g * 255.0f * finaFinalFinalMultiplier, /// averageLuminance,
-            luminanceBuffer[idLum].b * 255.0f * finaFinalFinalMultiplier/// averageLuminance
+            luminanceBuffer[idLum].r * 255.0f * finalFinalFinalMultiplier,
+            luminanceBuffer[idLum].g * 255.0f * finalFinalFinalMultiplier, 
+            luminanceBuffer[idLum].b * 255.0f * finalFinalFinalMultiplier
         );
 
         int idx = (i * width + j) * 3;
@@ -143,6 +147,7 @@ ColorF Scene::rayColor(Ray& ray) {
         float a = max(0.0f, dot(hitRecord.normal, -incidentLightDirection));
         float diffuse = a * diffuseWeight * light->intensity;
         totalLight += diffuse;
+
         // Specular!
         // check if the material is specular at all
         if (surface->material.specular > 0.001f) {
@@ -151,6 +156,17 @@ ColorF Scene::rayColor(Ray& ray) {
             float specular = b * specularWeight * light->intensity;
             totalLight += specular;
         }
+
+
+        // Reflective surface
+        // if reflective...
+        // create a depth variable
+        // set it to 0, increment it for every recursive call. when you hit a
+        // maximum depth, stop recursively calling.
+        // tbh a max_depth of 1 is probably fine. (only recursively calls once)
+        //
+        // then recursively call this function with a new ray emanating from the
+        // intersection point in the direction of the reflection of the original ray
     }
     return totalLight;
  }

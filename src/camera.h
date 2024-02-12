@@ -18,6 +18,7 @@ public:
 
     void move(vec3 direction, float delta);
     void lookAt(vec3 position); // look at a point in (global) space e.g. `lookAt(sphere.origin)`
+    void rotate(vec3 axis, float delta); // rotate around an axis (in global space) e.g. `rotate(vec3(0,1,0), 0.1f
     // Generate a ray for a given pixel
     Ray generateRay(int i, int j);
     vec3 origin;

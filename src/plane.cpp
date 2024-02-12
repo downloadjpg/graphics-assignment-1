@@ -1,10 +1,9 @@
-#include "plane.h"
+#include "surface.h"
 #include <iostream>
 
 Plane::Plane(vec3 position, vec3 _normal) {
     origin = position;
     normal = _normal;
-    
 }
 
 Surface::HitRecord Plane::intersection(Ray& ray) {
@@ -22,7 +21,6 @@ Surface::HitRecord Plane::intersection(Ray& ray) {
         }
 
     }
-
     return HitRecord::Miss();
 }
 /*

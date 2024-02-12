@@ -241,6 +241,8 @@ void processInput(GLFWwindow *window)
         camera->move(vec3(0,-1,0), timeDelta);
 
     // TODO: Camera lookAt
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        camera->lookAt(current_scene->surfaces[0]->origin);
 
     // Swapping projection type
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
