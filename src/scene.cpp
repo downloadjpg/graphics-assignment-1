@@ -12,9 +12,9 @@ Scene::Scene() {
 
     renderer = new Renderer(this);
     // Add some shapes!
-    surfaces.push_back(new Sphere(vec3(0, 0, -10), 1.0f));
     surfaces.push_back(new Sphere(vec3(3, 2, -10), 1.0f));
-    surfaces.push_back(new Tetrahedron(vec3(-3, 2, -9), 2.0f));
+    surfaces.push_back(new Sphere(vec3(0, 1, -10), 0.5f));
+    surfaces.push_back(new Tetrahedron(vec3(-3, 3, -9), 2.0f));
     surfaces.push_back(new Plane(vec3(0, 0, 0), vec3(0, 1, 0)));
 
     surfaces[0]->material.albedo = vec3(0.7f, 0.1f, 0.2f); // pink
@@ -24,9 +24,9 @@ Scene::Scene() {
     surfaces[1]->material.reflectivity = 0.5f;
     surfaces[3]->material.reflectivity = 0.5f;
     // Let there be light!
-    lights.push_back(Light::newAmbientLight(vec3(0, 0, 0), vec3(1, 1, 1), 0.4f));
+    lights.push_back(Light::newAmbientLight(vec3(0, 0, 0), vec3(1, 1, 1), 0.5f));
     lights.push_back(Light::newDirectionalLight(vec3(1, -1, -1), vec3(1, 1, 1), 0.6f));
-    lights.push_back(Light::newPointLight(vec3(0, 6, -15), vec3(1, 1, 1), 1.0f));
+    lights.push_back(Light::newPointLight(vec3(0, 6, -15), vec3(1, 1, 1), 1.5f));
 }
 
 

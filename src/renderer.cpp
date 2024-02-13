@@ -39,6 +39,7 @@ vec3 Renderer::colorRay(Ray& ray, int depth) {
     const float ambientWeight = 0.5f;
     const float diffuseWeight = 0.5f;
     const float specularWeight = 0.8f;
+    const bool shadowsEnabled = true;
 
     const vec3 BACKGROUND_COLOR = vec3(0.2f, 0.1f, 0.6f); // ambient light is typically 0.2f
     // If we've reached the maximum recursion depth, return black.
@@ -68,10 +69,12 @@ vec3 Renderer::colorRay(Ray& ray, int depth) {
         float lightDist = light->distanceToLight(intersection.position);
 
         // Shadows!
-        Ray shadowRay = Ray(intersection.position, lightDir);
-        HitRecord shadowIntersection = closestIntersectionWithSurface(shadowRay, std::numeric_limits<float>::epsilon(), lightDist);
-        if (shadowIntersection.hit) {
-           continue;
+        if (shadowsEnabled) {
+            Ray shadowRay = Ray(intersection.position, lightDir);
+            HitRecord shadowIntersection = closestIntersectionWithSurface(shadowRay, std::numeric_limits<float>::epsilon(), lightDist);
+            if (shadowIntersection.hit) {
+                continue;
+            }
         }
 
         // Diffuse lighting

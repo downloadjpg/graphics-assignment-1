@@ -3,7 +3,7 @@ CXX = g++
 CXXFLAGS = -Wall -std=c++11 -g
 LIBS = -lglfw -lGLEW -lGL
 SRCDIR = src
-INCLUDES = -I$(SRCDIR) -I/home/brody-ubuntu/graphics-assignment-1/glm
+INCLUDES = -I$(SRCDIR) -Iglm -Istb_img
 
 SRC = $(wildcard $(SRCDIR)/*.cpp)
 

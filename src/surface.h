@@ -2,6 +2,7 @@
 #include "ray.h"
 #include "hitRecord.h"
 #include <glm/vec3.hpp>
+#include <vector>
 class Surface {
 public:
 // Material properties, can be used by other classes, but it's a surface property.
@@ -66,8 +67,5 @@ private:
     vec3 v3;
     vec3 v4;
 
-    Triangle* t1;
-    Triangle* t2;
-    Triangle* t3;
-    Triangle* t4;
+    std::vector<Triangle*> triangles;
 };

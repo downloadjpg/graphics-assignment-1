@@ -4,18 +4,20 @@
 #include <GLFW/glfw3.h>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "../stb_img/stb_image.h"
 
 
 #define STBI_MSC_SECURE_CRT
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include "../stb_img/stb_image_write.h"
 
 #include "scene.h"
 #include "camera.h"
 
 #include <chrono>
 #include <iostream>
+#include <string>
+#include <algorithm>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -25,9 +27,10 @@ void set_texture();
 Scene* current_scene;
 Camera* camera;
 
-bool animating = true;
-const int FPS = 24; 
-const float movieDuration = 1.0f; // seconds
+bool animating = false; 
+int manualCameraLookAtIndex = 0;
+const int FPS = 30; 
+const float movieDuration = 5.0f; // seconds
 const int maxFrames = FPS * movieDuration;
 const float frameDuration = 1.0f / (float) FPS;
 int frame = 0;
@@ -63,8 +66,17 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "}\n\0";
     
 
-int main()
+int main(int argc, char* argv[])
 {
+    // BRODY HERE ===============================================================================================
+        for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "-a") {
+            animating = true;
+            break;
+        }
+    }
+    // ============================================================================================================
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -256,8 +268,22 @@ void processInput(GLFWwindow *window)
         camera->move(vec3(0,-1,0), timeDelta);
 
     // TODO: Camera lookAt
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        camera->lookAt(current_scene->surfaces[0]->origin);
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        manualCameraLookAtIndex -= 1;
+        manualCameraLookAtIndex = std::max(0, manualCameraLookAtIndex);
+        manualCameraLookAtIndex = std::min(manualCameraLookAtIndex, (int) current_scene->surfaces.size() - 1);
+        camera->lookAt(current_scene->surfaces.at(manualCameraLookAtIndex)->origin);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        manualCameraLookAtIndex += 1;
+        manualCameraLookAtIndex = std::max(0, manualCameraLookAtIndex);
+        manualCameraLookAtIndex = std::min(manualCameraLookAtIndex, (int) current_scene->surfaces.size() - 1);
+        camera->lookAt(current_scene->surfaces.at(manualCameraLookAtIndex)->origin);
+    }
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        camera->lookAt(vec3(0,0,0));
+    }
 
     // Swapping projection type
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
@@ -310,10 +336,17 @@ void animateObjects() {
         }
         float t = (float) frame / (float) maxFrames;
         // animations!!
-        camera->origin = vec3(0, 10 - 8 * t, -30);
+
+        // rotate the camera around the origin
+        float A = 12 - 4 * cos(4 * 3.14159 * t);
+        float x = A * cos(2 * 3.14159 * t);
+        float z = A * sin(2 * 3.14159 * t) - 10;
+        float y = 10 - 8* t;
+        camera->origin = vec3(x, y, z);
+        
         camera->lookAt(vec3(0, 0, -10));
 
-        current_scene->lights[2]->color = vec3(1, 1 - t, t) * (1 - t);
+        current_scene->lights[2]->color = vec3(1, 1 - t, t);
     }
 }
 // ============================================================================================================

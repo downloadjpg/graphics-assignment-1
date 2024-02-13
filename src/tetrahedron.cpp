@@ -1,4 +1,5 @@
 #include "surface.h"
+#include <vector>
 
 Tetrahedron::Tetrahedron(vec3 _origin, float _edgeLength) {
     origin = _origin;
@@ -11,10 +12,20 @@ Tetrahedron::Tetrahedron(vec3 _origin, float _edgeLength) {
     v4 = origin + vec3(0.0f, -1.0f, r2) * 0.5f * edgeLength;
 
     // The set of triangles is as follows
-    t1 = new Triangle(v1, v2, v3);
-    t2 = new Triangle(v1, v2, v4);
-    t3 = new Triangle(v1, v3, v4);
-    t4 = new Triangle(v2, v3, v4);
+    triangles = {
+        new Triangle(v1, v2, v3),
+        new Triangle(v1, v2, v4),
+        new Triangle(v1, v3, v4),
+        new Triangle(v2, v3, v4)
+    };
+
+    // Make sure the normals are right!
+    for (auto triangle : triangles) {
+        if (dot(triangle->normal, v1 - origin) < 0) {
+            triangle->normal = -triangle->normal;
+        }
+    }
+    
 
 
 };
@@ -24,31 +35,16 @@ HitRecord Tetrahedron::intersection(Ray& ray) {
     if (!boundingCheck.hit) {
         return HitRecord::Miss();
     }
-    HitRecord hit1 = t1->intersection(ray);
-    HitRecord hit2 = t2->intersection(ray);
-    HitRecord hit3 = t3->intersection(ray);
-    HitRecord hit4 = t4->intersection(ray);
 
-    // Return the closest hit
-    float closestDist = std::numeric_limits<float>::max();
     HitRecord closestHit = HitRecord::Miss();
+    closestHit.distance = std::numeric_limits<float>::infinity();
+    for (auto triangle : triangles) {
+        HitRecord hit = triangle->intersection(ray);
+        if (hit.hit && hit.distance < closestHit.distance) {
+            closestHit = hit;
+        }
+    }
 
-    if (hit1.hit && hit1.distance < closestDist) {
-        closestDist = hit1.distance;
-        closestHit = hit1;
-    }
-    if (hit2.hit && hit2.distance < closestDist) {
-        closestDist = hit2.distance;
-        closestHit = hit2;
-    }
-    if (hit3.hit && hit3.distance < closestDist) {
-        closestDist = hit3.distance;
-        closestHit = hit3;
-    }
-    if (hit4.hit && hit4.distance < closestDist) {
-        closestDist = hit4.distance;
-        closestHit = hit4;
-    }
     return HitRecord{
         .hit = closestHit.hit,
         .distance = closestHit.distance,
@@ -59,8 +55,7 @@ HitRecord Tetrahedron::intersection(Ray& ray) {
 };
 
 Tetrahedron::~Tetrahedron() {
-    delete t1;
-    delete t2;
-    delete t3;
-    delete t4;
+    for (auto triangle : triangles) {
+        delete triangle;
+    }
 }
