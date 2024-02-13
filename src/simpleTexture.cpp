@@ -3,6 +3,13 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "../stb_image/stb_image.h"
+
+#define STBI_MSC_SECURE_CRT
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "../stb_image/stb_image_write.h"
+
 #include "scene.h"
 #include "camera.h"
 
@@ -179,7 +186,7 @@ int main()
     // -----------
     while (!glfwWindowShouldClose(window))
     {
-        // BRODY HERE ===============================================================================================
+        // BRODY HERE ==================================================5=============================================
         updateClock();
         // ============================================================================================================
         // input
@@ -269,7 +276,7 @@ void set_texture(){
 
         // TODO: make this one spot in memory that we constantly write to, instead of creating a new one every frame
 
-        unsigned char* image = current_scene->renderImage(width, height);
+        unsigned char* image = current_scene->renderer->renderImage();
 
         unsigned char *data = &image[0];
         if (data)
@@ -281,7 +288,6 @@ void set_texture(){
         {
             std::cout << "Failed to load texture" << std::endl;
         }
-        delete[] image;
 }
 
 // BRODY HERE ===============================================================================================

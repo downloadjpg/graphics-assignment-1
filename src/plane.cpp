@@ -14,7 +14,7 @@ HitRecord Plane::intersection(Ray& ray) {
     //denominator = abs(denominator);
     if (abs(denominator) > std::numeric_limits<float>::epsilon()) {
         float distance = dot(normal, origin - ray.origin) / denominator;
-        if (distance > 0) {
+        if (distance > 0.00000f) {
             return HitRecord{
                 .hit = true,
                 .distance = distance,

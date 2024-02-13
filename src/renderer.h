@@ -1,13 +1,21 @@
-#include "scene.h"
+#pragma once
+#include <glm/vec3.hpp>
+using namespace glm;
+
+class Camera;
+class Scene;
+class Ray;
+class HitRecord;
 
 class Renderer {
 public:
     Camera* camera;
     Scene* scene;
-    // Writes the output buffer at the specified address, representing the final image.
-    unsigned char* renderImage(const int width, const int height); // in pixels!
+    int maxDepth = 2;
 
-    Renderer(Camera* camera, Scene* scene);
+    unsigned char* renderImage();
+
+    Renderer(Scene* scene);
     ~Renderer();
     
 
@@ -15,13 +23,20 @@ private:
     // Returns the color of a ray, given the scene.
     vec3 colorRay(Ray& ray, int depth);
     // Returns the closest intersection with a surface.
-    HitRecord closestIntersectionWithSurface(Ray& ray, float tMin, float tMax);
+    HitRecord closestIntersectionWithSurface(Ray &ray, 
+        float tMin = std::numeric_limits<float>::epsilon(), 
+        float tMax = std::numeric_limits<float>::max());
 
     // Graphics shenanigans
+
+    const int width = 512; // in pixels!
+    const int height = 512;
+    // Have a single location for the output buffer
     unsigned char* outputBuffer;
-    void writeOutputBuffer(unsigned char* image, int width, int height);
-    // float* radianceBuffer;
-    // void writeRadianceBuffer()
-    // void applyToneMap()
-    // void writeImageFile()
+    vec3* radianceBuffer;
+    void writeOutputBuffer();
+    void writeRadianceBuffer();
+
+    void radianceBufferToImage();
+
 };

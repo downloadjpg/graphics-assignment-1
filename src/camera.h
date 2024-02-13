@@ -37,14 +37,14 @@ private:
     
     // The in-world 'size' of the view plane
     const struct ViewPlane {
-        float l = -0.5f; // left
-        float r = 0.5f; // right
-        float b = -0.5f; // bottom
-        float t = 0.5f; // top
+        float l = -0.5f * 5; // left
+        float r = 0.5f * 5; // right
+        float b = -0.5f * 5; // bottom
+        float t = 0.5f * 5; // top
     } viewPlane;
 
     ProjectionType projectionType = ProjectionType::perspective;
-    float perspectiveDistance = 1.0f; // TODO: incorporate FOV!
+    float perspectiveDistance = 5.0f; // TODO: incorporate FOV!
 
     Ray generateOrthographicRay(int i, int j);
     Ray generatePerspectiveRay(int i, int j);

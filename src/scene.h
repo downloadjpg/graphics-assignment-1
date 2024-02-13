@@ -3,15 +3,14 @@
 #include <limits>
 #include <glm/vec3.hpp>
 
-#include "ray.h"
-#include "colorf.h"
+#include "renderer.h"
 
 using namespace glm;
 
 class Camera;
-class Renderer;
 class Surface;
 struct Light;
+struct Ray;
 struct HitRecord;
 
 class Scene {
@@ -21,6 +20,7 @@ public:
     Camera* camera;
     std::vector<Surface*> surfaces;
     std::vector<Light*> lights;
+    Renderer* renderer;
 
     // Constructor and destructor.
     Scene();
