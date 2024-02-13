@@ -8,7 +8,7 @@ INCLUDES = -I$(SRCDIR) -Iglm -Istb_img
 SRC = $(wildcard $(SRCDIR)/*.cpp)
 
 OBJ = $(addprefix build/, $(notdir $(SRC:.cpp=.o)))
-EXEC = build/rayTracingAssignment1
+EXEC = build/raytracer.exe
 
 # Default target
 all: $(EXEC)
