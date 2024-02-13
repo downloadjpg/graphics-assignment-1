@@ -18,7 +18,7 @@ void Camera::lookAt(vec3 position) {
     // Of course it's really looking in the opposite direction, as -w is forward.
     w = normalize(-(position - origin)); // forward
     u = normalize(cross(vec3(0,1,0), w)); // right
-    v = cross(u, w); // up
+    v = cross(w, u); // up
     // NOTE: we assume a global up direction direction to maintain orthogonality
 }
 

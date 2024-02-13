@@ -10,11 +10,9 @@ Plane::Plane(vec3 position, vec3 _normal) {
 
 HitRecord Plane::intersection(Ray& ray) {
     float denominator = dot(normal, ray.direction);
-    //float insideNormal = sign(denominator);
-    //denominator = abs(denominator);
     if (abs(denominator) > std::numeric_limits<float>::epsilon()) {
         float distance = dot(normal, origin - ray.origin) / denominator;
-        if (distance > 0) {
+        if (distance > std::numeric_limits<float>::epsilon()) {
             return HitRecord{
                 .hit = true,
                 .distance = distance,

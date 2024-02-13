@@ -22,11 +22,15 @@ Camera* camera;
 std::chrono::time_point<std::chrono::steady_clock> timeOfPreviousFrame = std::chrono::steady_clock::now();
 void updateClock();
 float timeDelta = 0.0f;
+
+bool movieMode = false;
 // ============================================================================================================
 
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
+
+
 
 
 const char *vertexShaderSource = "#version 330 core\n"
@@ -259,6 +263,10 @@ void processInput(GLFWwindow *window)
         glfwSetWindowShouldClose(window, true);
 
     // BRODY HERE ===============================================================================================
+    if (movieMode) {
+        //addFrameToMovie();
+        //continue;
+    }
     // Camera movement
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera->move(vec3(0,0,-1), timeDelta);
@@ -274,8 +282,18 @@ void processInput(GLFWwindow *window)
         camera->move(vec3(0,-1,0), timeDelta);
 
     // TODO: Camera lookAt
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) // reset to look forward
+        camera->lookAt(camera->origin + vec3(0,0,-1));
+
+        // Cycles between focusing on each of the surfaces
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && current_scene->surfaces[0] != nullptr)
         camera->lookAt(current_scene->surfaces[0]->origin);
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && current_scene->surfaces[1] != nullptr)
+        camera->lookAt(current_scene->surfaces[1]->origin);
+    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && current_scene->surfaces[2] != nullptr)
+        camera->lookAt(current_scene->surfaces[2]->origin);
+    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && current_scene->surfaces[3] != nullptr)
+        camera->lookAt(current_scene->surfaces[3]->origin);
 
     // Swapping projection type
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
@@ -324,3 +342,17 @@ void updateClock() {
     //std::cout << timeDelta << std::endl;
     timeOfPreviousFrame = now;
 }
+
+// --- movieMaker
+/*
+static int currentFrame = 0;
+
+void addFrameToMovie() {
+    const time_step = 1.0f / 24.0f; // 24 frames per second
+    
+    // position everything accordingly
+
+    
+    
+    currentFrame++;
+}*/

@@ -27,7 +27,7 @@ public:
     unsigned char* renderImage(const int width, const int height); // in pixel
 
     // Minimum and maximum values for ray intersection.
-    const float tMin = 0.001f;
+    const float tMin = EPSILON;
     const float tMax = 10000.0f;
 private:
     // The time of the scene.
@@ -46,4 +46,6 @@ private:
 
     // Maps a radiance buffer so each value is between 0 and 1. (Reinhard tone mapping).
     void applyToneMap(vec3* radianceBuffer, int width, int height, float whitePoint);
+
+    void bruteForceClamp(vec3* buffer, int width, int height);
 };

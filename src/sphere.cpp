@@ -2,7 +2,7 @@
 #include <cmath>
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
-
+#include <algorithm>
 // TODO: Review this!
 
 Sphere::Sphere(vec3 _origin, float _radius){
@@ -22,9 +22,15 @@ HitRecord Sphere::intersection(Ray& ray) {
         return HitRecord::Miss();
 
     // Normal will be the vector from the center of the sphere to the point of intersection
-    float distance = (-b / 2.0f) - sqrt(discriminant);
-    if (distance < 0) 
-        return HitRecord::Miss();
+    discriminant = sqrt(discriminant);
+    float distance = (-b / 2.0f) - discriminant;
+    if (distance <= 0) {
+        float distance2 = (-b / 2.0f) + discriminant; // if we're inside the sphere, we want the second intersection
+        if (distance2 <= 0)
+            return HitRecord::Miss();
+        distance = distance2;
+    }
+            
 
     vec3 position = ray.origin + distance * ray.direction;
     vec3 normal = normalize(position - origin);
