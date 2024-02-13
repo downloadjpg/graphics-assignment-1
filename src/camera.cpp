@@ -18,7 +18,7 @@ void Camera::lookAt(vec3 position) {
     // Of course it's really looking in the opposite direction, as -w is forward.
     w = normalize(-(position - origin)); // forward
     u = normalize(cross(vec3(0,1,0), w)); // right
-    v = cross(u, w); // up
+    v = -cross(u, w); // up
     // NOTE: we assume a global up direction direction to maintain orthogonality
 }
 
@@ -35,7 +35,7 @@ Ray Camera::generateRay(int i, int j) {
 
 Ray Camera::generateOrthographicRay(int i, int j) {
     float u_scale = viewPlane.l + (viewPlane.r - viewPlane.l) * (i + 0.5) / (float)imageWidth;
-    float v_scale = viewPlane.l + (viewPlane.r - viewPlane.l) * (j + 0.5) / (float)imageHeight;
+    float v_scale = viewPlane.t + (viewPlane.b - viewPlane.t) * (j + 0.5) / (float)imageHeight;
     
     Ray ray;
     ray.direction = -w;
@@ -47,7 +47,7 @@ Ray Camera::generateOrthographicRay(int i, int j) {
 
 Ray Camera::generatePerspectiveRay(int i, int j) {
     float u_scale = viewPlane.l + (viewPlane.r - viewPlane.l) * (i + 0.5) / (float)imageWidth;
-    float v_scale = viewPlane.b + (viewPlane.t - viewPlane.b) * (j + 0.5) / (float)imageHeight;
+    float v_scale = viewPlane.t + (viewPlane.b - viewPlane.t) * (j + 0.5) / (float)imageHeight;
     float& d = perspectiveDistance;
 
     Ray ray;

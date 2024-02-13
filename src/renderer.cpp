@@ -40,7 +40,7 @@ vec3 Renderer::colorRay(Ray& ray, int depth) {
     const float diffuseWeight = 0.5f;
     const float specularWeight = 0.8f;
 
-    const vec3 BACKGROUND_COLOR = vec3(0.3f, 0.0f, 1.0f) * 0.2f; // ambient light is typically 0.2f
+    const vec3 BACKGROUND_COLOR = vec3(0.2f, 0.1f, 0.6f); // ambient light is typically 0.2f
     // If we've reached the maximum recursion depth, return black.
      if (depth > maxDepth) {
          return vec3(0, 0, 0);
@@ -81,6 +81,14 @@ vec3 Renderer::colorRay(Ray& ray, int depth) {
         diffuse *= diffuseWeight;
         color += diffuse * intersection.surface->material.albedo * light->color * light->intensity;
 
+        // Reflections!
+        if (intersection.surface->material.reflectivity > 0.0f) {
+            vec3 reflectionDir = glm::reflect(ray.direction, intersection.normal);
+            Ray reflectionRay = Ray(intersection.position, reflectionDir);
+            vec3 reflectionColor = colorRay(reflectionRay, depth + 1);
+            color += reflectionColor * intersection.surface->material.albedo * intersection.surface->material.reflectivity;
+        }
+
         // Specular lighting
         if (intersection.surface->material.phongExponent < 0) {
             continue;
@@ -90,13 +98,6 @@ vec3 Renderer::colorRay(Ray& ray, int depth) {
         specular *= specularWeight;
         color += specular * light->color * light->intensity;
 
-        // Reflections!
-        if (intersection.surface->material.reflectivity > 0) {
-            vec3 reflectionDir = glm::reflect(ray.direction, intersection.normal);
-            Ray reflectionRay = Ray(intersection.position, reflectionDir);
-            vec3 reflectionColor = colorRay(reflectionRay, depth + 1);
-            color += reflectionColor * intersection.surface->material.reflectivity;
-        }
     }
     return color;
 }
@@ -126,7 +127,7 @@ void Renderer::writeRadianceBuffer() {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             // Generate a ray for the current pixel
-            Ray ray = camera->generateRay(j, i); // j,i is x,y
+            Ray ray = camera->generateRay(j, i);
             // Determine what color the ray ultimately contributes to the pixel
             vec3 c = colorRay(ray, 0);
             radianceBuffer[i * width + j] = c;
@@ -147,6 +148,7 @@ void Renderer::writeOutputBuffer() {
         color.r = std::min(color.r, 1.0f);
         color.g = std::min(color.g, 1.0f);
         color.b = std::min(color.b, 1.0f);
+        
         // Convert the color to an 8-bit RGB value
         outputBuffer[i * 3 + 0] = (unsigned char)(255.0f * color.r);
         outputBuffer[i * 3 + 1] = (unsigned char)(255.0f * color.g);

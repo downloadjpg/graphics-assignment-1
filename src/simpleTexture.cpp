@@ -6,6 +6,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+
 #define STBI_MSC_SECURE_CRT
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -18,13 +19,19 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
-void set_texture();
 // BRODY HERE ===============================================================================================
+void animateObjects();
+void set_texture();
 Scene* current_scene;
 Camera* camera;
-std::chrono::time_point<std::chrono::steady_clock> timeOfPreviousFrame = std::chrono::steady_clock::now();
-void updateClock();
-float timeDelta = 0.0f;
+
+bool animating = true;
+const int FPS = 24; 
+const float movieDuration = 1.0f; // seconds
+const int maxFrames = FPS * movieDuration;
+const float frameDuration = 1.0f / (float) FPS;
+int frame = 0;
+
 // ============================================================================================================
 
 // settings
@@ -130,10 +137,10 @@ int main()
     // BRODY HERE: Changed the vertex positions to cover the whole window
     float vertices[] = {
         // positions          // colors           // texture coords
-         1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-         1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-        -1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-        -1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+         1.0f,  -1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+         1.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+        -1.0f, 1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+        -1.0f,  -1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
     };
     unsigned int indices[] = {  
         0, 1, 3, // first triangle
@@ -186,15 +193,15 @@ int main()
     // -----------
     while (!glfwWindowShouldClose(window))
     {
-        // BRODY HERE ==================================================5=============================================
-        updateClock();
-        // ============================================================================================================
         // input
         // -----
-        processInput(window);
+        if (!animating)
+            processInput(window);
 
         // render
         // ------
+    
+        animateObjects();
         set_texture();
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -234,6 +241,7 @@ void processInput(GLFWwindow *window)
 
     // BRODY HERE ===============================================================================================
     // Camera movement
+    float timeDelta = 1.0f;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera->move(vec3(0,0,-1), timeDelta);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -268,16 +276,19 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
+// BRODY HERE ===============================================================================================
 void set_texture(){
         // Create the image (RGB Array) to be displayed
         const int width  = 512; // keep it in powers of 2!
         const int height = 512; // TODO: update camera width/height to match
-        
-
-        // TODO: make this one spot in memory that we constantly write to, instead of creating a new one every frame
 
         unsigned char* image = current_scene->renderer->renderImage();
 
+        // Save image to file
+        if (animating) {
+            stbi_write_jpg(("output/frame" + std::to_string(frame) + ".jpg").c_str(), width, height, 3, image, 100);
+        }
+        // Render to screen
         unsigned char *data = &image[0];
         if (data)
         {
@@ -290,13 +301,19 @@ void set_texture(){
         }
 }
 
-// BRODY HERE ===============================================================================================
-void updateClock() {
-    auto now = std::chrono::steady_clock::now(); // Why steady clock, you ask? 
-    //                                               It sounds stable.
 
-    // Get time elapsed since last frame
-    timeDelta = (now - timeOfPreviousFrame).count() / 1000000000.0f; // nanoseconds? really?
-    //std::cout << timeDelta << std::endl;
-    timeOfPreviousFrame = now;
+void animateObjects() {
+    if (animating) {
+        frame += 1;
+        if (frame > maxFrames) {
+            animating = false;
+        }
+        float t = (float) frame / (float) maxFrames;
+        // animations!!
+        camera->origin = vec3(0, 10 - 8 * t, -30);
+        camera->lookAt(vec3(0, 0, -10));
+
+        current_scene->lights[2]->color = vec3(1, 1 - t, t) * (1 - t);
+    }
 }
+// ============================================================================================================

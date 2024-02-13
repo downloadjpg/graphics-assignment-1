@@ -15,6 +15,8 @@ Tetrahedron::Tetrahedron(vec3 _origin, float _edgeLength) {
     t2 = new Triangle(v1, v2, v4);
     t3 = new Triangle(v1, v3, v4);
     t4 = new Triangle(v2, v3, v4);
+
+
 };
 
 HitRecord Tetrahedron::intersection(Ray& ray) {
@@ -47,8 +49,14 @@ HitRecord Tetrahedron::intersection(Ray& ray) {
         closestDist = hit4.distance;
         closestHit = hit4;
     }
-    return closestHit;
-}
+    return HitRecord{
+        .hit = closestHit.hit,
+        .distance = closestHit.distance,
+        .normal = closestHit.normal,
+        .position = closestHit.position,
+        .surface = this
+    };
+};
 
 Tetrahedron::~Tetrahedron() {
     delete t1;

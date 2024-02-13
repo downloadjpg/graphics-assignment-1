@@ -8,7 +8,7 @@ public:
     struct Material {
         vec3 albedo = vec3(0.7f,0.1f,0.2f); // bright annoying pink for uninitialized surfaces
         float phongExponent = -1.0f; // 0-1000 are good values for this, negative means no specular reflection
-        float reflectivity = false; // TODO: float?
+        float reflectivity = 0.0f; // 0-1, 0 is no reflection, 1 is perfect reflection
     };
 
     vec3 origin;
