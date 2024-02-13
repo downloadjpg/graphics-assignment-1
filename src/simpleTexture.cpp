@@ -265,6 +265,9 @@ void set_texture(){
         // Create the image (RGB Array) to be displayed
         const int width  = 512; // keep it in powers of 2!
         const int height = 512; // TODO: update camera width/height to match
+        
+
+        // TODO: make this one spot in memory that we constantly write to, instead of creating a new one every frame
 
         unsigned char* image = current_scene->renderImage(width, height);
 

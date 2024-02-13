@@ -24,6 +24,8 @@ unsigned char* Scene::renderImage(int width, int height) {
     //      while luminosity is how bright said color appears to the human eye.
     vec3* radianceBuffer = new vec3[width * height];
     float maxWhitePoint = writeRadianceBuffer(radianceBuffer, width, height);  // Useful return value
+    // actually, setting the white point to the maximum value in the image is not a good idea, it changes every damn frame.
+    maxWhitePoint = 1.0f;  // for now, we'll just set it to 1.0f
     // Map this buffer so each value is between 0 and 1. (Reinhard tone mapping).
     applyToneMap(radianceBuffer, width, height, maxWhitePoint);
     // Then, convert the mapped radiance to an RGB value and store it in the image array.
