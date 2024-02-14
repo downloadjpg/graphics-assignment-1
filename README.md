@@ -5,7 +5,11 @@ If this doesn't work, I am so sorry. I have no further words. I made a WSL distr
 The program is compiled to build/raytracer.exe Run it with the -a flag to render a predefined animation (exported to output/). 
 
 Otherwise, the program runs in a `live` mode:
-WASD: move
+
+# Controls
+WASD: move in XZ direction
+QE: move in Y direction.
+
 LEFT/RIGHT ARROW: Cycle object look direction focus
 UP ARROW: Look at origin
 

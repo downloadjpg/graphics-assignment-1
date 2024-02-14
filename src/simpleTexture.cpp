@@ -29,8 +29,8 @@ Camera* camera;
 
 bool animating = false; 
 int manualCameraLookAtIndex = 0;
-const int FPS = 30; 
-const float movieDuration = 5.0f; // seconds
+const int FPS = 10; 
+const float movieDuration = 10.0f; // seconds
 const int maxFrames = FPS * movieDuration;
 const float frameDuration = 1.0f / (float) FPS;
 int frame = 0;
@@ -253,7 +253,7 @@ void processInput(GLFWwindow *window)
 
     // BRODY HERE ===============================================================================================
     // Camera movement
-    float timeDelta = 1.0f;
+    float timeDelta = 0.5f; // i had this working with an actual clock, but it got lost somewhere in the rewrites.
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera->move(vec3(0,0,-1), timeDelta);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -335,18 +335,21 @@ void animateObjects() {
             animating = false;
         }
         float t = (float) frame / (float) maxFrames;
+        t = 2 * t; // shi
         // animations!!
 
         // rotate the camera around the origin
-        float A = 12 - 4 * cos(4 * 3.14159 * t);
+        float A = 15 - 4 * cos(2 * 3.14159 * t);
         float x = A * cos(2 * 3.14159 * t);
         float z = A * sin(2 * 3.14159 * t) - 10;
-        float y = 10 - 8* t;
+        float y = 10 - 4 * t;
         camera->origin = vec3(x, y, z);
         
-        camera->lookAt(vec3(0, 0, -10));
+        camera->lookAt(vec3(0, 1, -10));
 
-        current_scene->lights[2]->color = vec3(1, 1 - t, t);
+        current_scene->surfaces[0]->origin.y += 0.1 * sin(3.14 * t);
+
+        current_scene->lights[2]->color = vec3(1, 1 - (cos(3.14 * t)/2 + 0.5f), sin( 3.14 * t)/2 + 0.5f);
     }
 }
 // ============================================================================================================

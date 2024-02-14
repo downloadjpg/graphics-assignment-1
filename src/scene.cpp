@@ -13,7 +13,7 @@ Scene::Scene() {
     renderer = new Renderer(this);
     // Add some shapes!
     surfaces.push_back(new Sphere(vec3(3, 2, -10), 1.0f));
-    surfaces.push_back(new Sphere(vec3(0, 1, -10), 0.5f));
+    surfaces.push_back(new Sphere(vec3(0, 1, -10), 0.6f));
     surfaces.push_back(new Tetrahedron(vec3(-3, 3, -9), 2.0f));
     surfaces.push_back(new Plane(vec3(0, 0, 0), vec3(0, 1, 0)));
 

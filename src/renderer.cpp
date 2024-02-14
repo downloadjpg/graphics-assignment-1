@@ -70,7 +70,7 @@ vec3 Renderer::colorRay(Ray& ray, int depth) {
 
         // Shadows!
         if (shadowsEnabled) {
-            Ray shadowRay = Ray(intersection.position, lightDir);
+            Ray shadowRay = Ray(intersection.position + intersection.normal * std::numeric_limits<float>::epsilon(), lightDir);
             HitRecord shadowIntersection = closestIntersectionWithSurface(shadowRay, std::numeric_limits<float>::epsilon(), lightDist);
             if (shadowIntersection.hit) {
                 continue;
